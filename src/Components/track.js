@@ -6,7 +6,9 @@ import React, {
   useMemo,
   Fragment,
 } from "react";
-import { Button, Dropdown, Icon } from "semantic-ui-react";
+import Navbar from "./navbar";
+import Loader from "./loader";
+import { Button, Dropdown, Icon, Divider, Transition } from "semantic-ui-react";
 import { refreshTrack } from "./track-handler";
 import { WaveSurfer, WaveForm } from "wavesurfer-react";
 const trackOptions = [
@@ -55,17 +57,20 @@ function Track(props) {
   const [title, setTitle] = useState("drums");
   const [containers, setContainers] = useState([]);
   const wavesurferRef = useRef();
+  const [loading, setLoading] = useState(false);
   const [indContainer, setIndContainer] = useState();
   const [masterContainer, setMasterContainer] = useState({});
 
   async function updateTrack() {
     console.log("1", tracks);
+    setLoading(true);
     let output = await refreshTrack(tracks, title);
     console.log("output", output);
     setTracks(output);
     console.log("12", tracks);
-    containers[1].loadBlob(output[title]);
-    containers[0].loadBlob(output.master);
+    indContainer.loadBlob(output[title]);
+    masterContainer.loadBlob(output.master);
+    setLoading(false);
   }
 
   const handleWSMount = useCallback(async (waveSurfer, track) => {
@@ -94,23 +99,21 @@ function Track(props) {
     }
   }, []);
   const handleChange = async (event, data) => {
-    console.log(data);
-    containers[1].loadBlob(tracks[data.value]);
+    console.log("ccc", containers);
+    indContainer.loadBlob(tracks[data.value]);
     setTitle(data.value);
   };
   const play = (id) => {
     console.log(containers);
-    if (id == "ind") {
-      containers[1].playPause();
-      return;
-    }
+    id == "ind" ? indContainer.playPause() : masterContainer.playPause();
+
     console.log(dropdownDisplay);
-    containers[0].playPause();
-    setMasterContainer(wavesurferRef.current);
   };
   return (
     <div>
+      <Navbar />
       <h1 style={{ marginLeft: "5%", color: "white" }}>Instrumental</h1>
+
       <div
         style={{
           width: "90%",
@@ -121,7 +124,7 @@ function Track(props) {
         <WaveSurfer
           onMount={(wave) => {
             handleWSMount(wave, tracks.master);
-            setContainers((oldArray) => [...oldArray, wave]);
+            setMasterContainer(wave);
           }}
         >
           <WaveForm id="waveform"></WaveForm>
@@ -144,12 +147,16 @@ function Track(props) {
         color="purple"
         size="large"
         onClick={() => {
-          setDropdownDisplay(true);
+          setDropdownDisplay(!dropdownDisplay);
+          if (dropdownDisplay) {
+            indContainer.pause();
+          }
         }}
       >
         {" "}
-        Show individual tracks <Icon name="angle down"></Icon>
+        Show tracks <Icon name="angle down"></Icon>
       </Button>
+      <Divider style={{ opacity: 0 }} />
       {dropdownDisplay ? (
         <Fragment>
           {/*             <h1
@@ -161,11 +168,12 @@ function Track(props) {
           >
             {title}
           </h1> */}
+
           <Dropdown
             style={{
               marginLeft: "5%",
               marginTop: "20px",
-              display: "block",
+              display: "inline-block",
               width: "150px",
             }}
             defaultValue={"drums"}
@@ -173,17 +181,7 @@ function Track(props) {
             onChange={handleChange}
             options={trackOptions}
           ></Dropdown>
-          <Button
-            style={{ marginLeft: "5%" }}
-            primary
-            size="large"
-            onClick={() => {
-              updateTrack("melody");
-            }}
-          >
-            {" "}
-            Refresh track
-          </Button>
+
           <div
             style={{
               width: "90%",
@@ -191,16 +189,22 @@ function Track(props) {
               border: "3px solid white",
             }}
           >
-            <WaveSurfer
-              id="ind"
-              onMount={(wave) => {
-                handleWSMount(wave, tracks.drums);
-                setContainers((oldArray) => [...oldArray, wave]);
-              }}
+            <Transition
+              visible={dropdownDisplay}
+              animation="fade"
+              duration={500}
             >
-              <WaveForm id="waveform2"></WaveForm>
-              <div id="timeline" />
-            </WaveSurfer>
+              <WaveSurfer
+                id="ind"
+                onMount={(wave) => {
+                  handleWSMount(wave, tracks.drums);
+                  setIndContainer(wave);
+                }}
+              >
+                <WaveForm id="waveform2"></WaveForm>
+                <div id="timeline" />
+              </WaveSurfer>
+            </Transition>
           </div>
           <Button
             style={{ marginLeft: "5%" }}
@@ -212,6 +216,18 @@ function Track(props) {
           >
             {" "}
             Play / Pause
+          </Button>
+          <Button
+            style={{ marginLeft: 4, backgroundColor: "red !important" }}
+            primary
+            loading={loading}
+            size="large"
+            onClick={() => {
+              updateTrack("melody");
+            }}
+          >
+            {" "}
+            Refresh track
           </Button>
         </Fragment>
       ) : (

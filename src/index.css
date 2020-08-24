@@ -18,3 +18,23 @@ code {
 #waveform2 {
   background-color: #000000;
 }
+.ui.primary.button {
+  background-color: mediumslateblue !important;
+}
+.ui.primary.button:hover {
+  background-color: darkslateblue !important;
+}
+button.ui.massive.secondary.button {
+  margin-left: calc(50% - 145px) !important;
+  display: block !important;
+  overflow: hidden !important;
+  width: 290px !important;
+}
+#title-h1 {
+  text-align: center !important;
+}
+@media screen and (max-width: 900px) {
+  #title-h1 {
+    margin-top: 15vh !important;
+  }
+}

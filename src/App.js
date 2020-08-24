@@ -5,6 +5,7 @@ import { WaveSurfer, WaveForm, Region } from "wavesurfer-react";
 import Track from "./Components/track";
 import "semantic-ui-css/semantic.min.css";
 import Home from "./Components/Home";
+
 function App() {
   return <Home />;
 }
