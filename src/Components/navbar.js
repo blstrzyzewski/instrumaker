@@ -1,8 +1,10 @@
 import ReactDOM from "react-dom";
-import React from "react";
+import React, { useState } from "react";
 import { Menu } from "semantic-ui-react";
 import Home from "./Home";
+import Settings from "./settings";
 export default function Navbar() {
+  const [activePage, setActivePage] = useState("instrumaker");
   return (
     <Menu
       pointing
@@ -16,8 +18,9 @@ export default function Navbar() {
       <Menu.Item
         style={{ fontColor: "white !important" }}
         name="Instrumaker"
-        active="Instrumaker"
+        active={"instrumaker" === activePage}
         onClick={() => {
+          setActivePage("instrumaker");
           ReactDOM.render(<Home />, document.getElementById("root"));
         }}
       >
@@ -26,7 +29,17 @@ export default function Navbar() {
       <Menu.Item floated="right" name="About">
         About
       </Menu.Item>
-      <Menu.Item name="Settings">Settings</Menu.Item>
+
+      <Menu.Item
+        name="settings"
+        active={"settings" === activePage}
+        onClick={() => {
+          setActivePage("settings");
+          ReactDOM.render(<Settings />, document.getElementById("root"));
+        }}
+      >
+        Settings
+      </Menu.Item>
     </Menu>
   );
 }

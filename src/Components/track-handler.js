@@ -2,14 +2,13 @@ import axios from "axios";
 import JSZip from "jszip";
 export async function getMelody(key = "", tempo = "", fixed = false) {
   let options;
-  if (fixed) {
-    options = { key: key, tempo: tempo, fixed: 1 };
-  } else {
-    options = { fixed: 0 };
-  }
+  fixed
+    ? (options = { key: key, tempo: tempo, fixed: 1 })
+    : (options = { fixed: 0 });
+
   const res = await axios({
     method: "get",
-    url: "http://192.168.1.4:5011/audioOptions",
+    url: "http://localhost:5011/audioOptions",
     params: options,
     responseType: "blob",
   });
@@ -20,7 +19,7 @@ export async function getDrums(key, tempo) {
   console.log("drums", key, tempo);
   const res = await axios({
     method: "get",
-    url: "http://192.168.1.4:5011/get_ind_track",
+    url: "http://localhost:5011/get_drum_tracks",
     responseType: "blob",
     params: {
       key: key,
@@ -57,7 +56,7 @@ export async function createMaster(melody, drums) {
 
   const res = await axios({
     method: "POST",
-    url: "http://192.168.1.4:5011/save-record",
+    url: "http://localhost:5011/save-record",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
@@ -94,7 +93,7 @@ export async function refreshTrack(tracks, trackName) {
 async function getOneTrack(trackName, key, tempo) {
   const options = {
     method: "get",
-    url: "http://192.168.1.4:5011/get_one_track",
+    url: "http://localhost:5011/get_one_track",
     params: {
       key: key,
       tempo: tempo,
@@ -117,7 +116,7 @@ async function combineDrums(trackAudio, key, tempo) {
 
   let options = {
     method: "post",
-    url: "http://192.168.1.4:5011/combine_drums",
+    url: "http://localhost:5011/combine_drums",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
