@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { Menu } from "semantic-ui-react";
 import Home from "./Home";
 import Settings from "./settings";
-export default function Navbar() {
-  const [activePage, setActivePage] = useState("instrumaker");
+import About from "./about";
+export default function Navbar(props) {
+  console.log("gggggggg", props);
+  const [activePage, setActivePage] = useState(props.props);
   return (
     <Menu
       pointing
@@ -20,13 +22,22 @@ export default function Navbar() {
         name="Instrumaker"
         active={"instrumaker" === activePage}
         onClick={() => {
-          setActivePage("instrumaker");
           ReactDOM.render(<Home />, document.getElementById("root"));
+          setActivePage("instrumaker");
         }}
       >
         Instrumaker
       </Menu.Item>
-      <Menu.Item floated="right" name="About">
+      <Menu.Item
+        floated="right"
+        name="About"
+        name="about"
+        active={"about" === activePage}
+        onClick={() => {
+          setActivePage("about");
+          ReactDOM.render(<About />, document.getElementById("root"));
+        }}
+      >
         About
       </Menu.Item>
 

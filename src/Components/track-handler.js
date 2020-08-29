@@ -1,25 +1,31 @@
 import axios from "axios";
 import JSZip from "jszip";
-export async function getMelody(key = "", tempo = "", fixed = false) {
+export async function getMelody(
+  key = "",
+  tempoMin = "",
+  tempoMax = "",
+  fixed = false
+) {
   let options;
   fixed
-    ? (options = { key: key, tempo: tempo, fixed: 1 })
-    : (options = { fixed: 0 });
+    ? (options = { key: key, tempoMin: tempoMin, tempoMax: tempoMax, fixed: 1 })
+    : (options = { tempoMin: tempoMin, tempoMax: tempoMax, fixed: 0 });
 
   const res = await axios({
     method: "get",
-    url: "http://localhost:5011/audioOptions",
+    url: "http://192.168.1.4:5011/audioOptions",
     params: options,
     responseType: "blob",
   });
   return res;
 }
 
-export async function getDrums(key, tempo) {
+export async function getDrums(key, tempo, simple = false) {
   console.log("drums", key, tempo);
+  const url = simple ? "getDrums" : "get_drum_tracks";
   const res = await axios({
     method: "get",
-    url: "http://localhost:5011/get_drum_tracks",
+    url: `http://192.168.1.4:5011/${url}`,
     responseType: "blob",
     params: {
       key: key,
@@ -56,7 +62,7 @@ export async function createMaster(melody, drums) {
 
   const res = await axios({
     method: "POST",
-    url: "http://localhost:5011/save-record",
+    url: "http://192.168.1.4:5011/save-record",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
@@ -67,9 +73,15 @@ export async function createMaster(melody, drums) {
 
 export async function refreshTrack(tracks, trackName) {
   if (trackName == "drums") {
-    const files = await getDrums(tracks.key, tracks.tempo);
+    let newTracks = {};
+    if (tracks.simple) {
+      const drums = await getDrums(tracks.key, tracks.tempo, true);
+      newTracks.drums = drums;
+    } else {
+      const files = await getDrums(tracks.key, tracks.tempo);
 
-    let newTracks = await unzipTracks(files);
+      newTracks = await unzipTracks(files);
+    }
     console.log("newTracks", newTracks);
     newTracks.melody = tracks.melody;
     newTracks.key = tracks.key;
@@ -77,7 +89,12 @@ export async function refreshTrack(tracks, trackName) {
     newTracks.master = await createMaster(newTracks.melody, newTracks.drums);
     return newTracks;
   } else if (trackName === "melody") {
-    const melody = await getMelody(tracks.key, tracks.tempo, true);
+    const melody = await getMelody(
+      tracks.key,
+      tracks.tempo,
+      tracks.tempo,
+      true
+    );
     tracks.melody = melody.data;
     tracks.master = await createMaster(tracks.melody, tracks.drums);
     return tracks;
@@ -93,7 +110,7 @@ export async function refreshTrack(tracks, trackName) {
 async function getOneTrack(trackName, key, tempo) {
   const options = {
     method: "get",
-    url: "http://localhost:5011/get_one_track",
+    url: "http://192.168.1.4:5011/get_one_track",
     params: {
       key: key,
       tempo: tempo,
@@ -116,7 +133,7 @@ async function combineDrums(trackAudio, key, tempo) {
 
   let options = {
     method: "post",
-    url: "http://localhost:5011/combine_drums",
+    url: "http://192.168.1.4:5011/combine_drums",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",

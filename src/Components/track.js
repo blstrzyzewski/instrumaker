@@ -13,6 +13,15 @@ import { refreshTrack } from "./track-handler";
 import { WaveSurfer, WaveForm } from "wavesurfer-react";
 const trackOptions = [
   {
+    key: "Melody",
+    text: "Melody",
+    value: "melody",
+    image: {
+      src:
+        "https://icons.iconarchive.com/icons/iconsmind/outline/32/Piano-icon.png",
+    },
+  },
+  {
     key: "Drums",
     text: "Drums",
     value: "drums",
@@ -30,15 +39,7 @@ const trackOptions = [
         "https://icons.iconarchive.com/icons/icons8/windows-8/32/Music-Bass-Drum-icon.png",
     },
   },
-  {
-    key: "Melody",
-    text: "Melody",
-    value: "melody",
-    image: {
-      src:
-        "https://icons.iconarchive.com/icons/iconsmind/outline/32/Piano-icon.png",
-    },
-  },
+
   {
     key: "Hat",
     text: "Hat",
@@ -179,7 +180,7 @@ function Track(props) {
             defaultValue={"drums"}
             selection
             onChange={handleChange}
-            options={trackOptions}
+            options={tracks.simple ? trackOptions.slice(0, 2) : trackOptions}
           ></Dropdown>
 
           <div
