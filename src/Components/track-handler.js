@@ -13,7 +13,7 @@ export async function getMelody(
 
   const res = await axios({
     method: "get",
-    url: "http://192.168.1.4:5011/audioOptions",
+    url: "http://localhost:5011/audioOptions",
     params: options,
     responseType: "blob",
   });
@@ -25,7 +25,7 @@ export async function getDrums(key, tempo, simple = false) {
   const url = simple ? "getDrums" : "get_drum_tracks";
   const res = await axios({
     method: "get",
-    url: `http://192.168.1.4:5011/${url}`,
+    url: `http://localhost:5011/${url}`,
     responseType: "blob",
     params: {
       key: key,
@@ -62,7 +62,7 @@ export async function createMaster(melody, drums) {
 
   const res = await axios({
     method: "POST",
-    url: "http://192.168.1.4:5011/save-record",
+    url: "http://localhost:5011/save-record",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
@@ -110,7 +110,7 @@ export async function refreshTrack(tracks, trackName) {
 async function getOneTrack(trackName, key, tempo) {
   const options = {
     method: "get",
-    url: "http://192.168.1.4:5011/get_one_track",
+    url: "http://localhost:5011/get_one_track",
     params: {
       key: key,
       tempo: tempo,
@@ -133,7 +133,7 @@ async function combineDrums(trackAudio, key, tempo) {
 
   let options = {
     method: "post",
-    url: "http://192.168.1.4:5011/combine_drums",
+    url: "http://localhost:5011/combine_drums",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
