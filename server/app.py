@@ -22,7 +22,7 @@ import datetime
 from pydub import AudioSegment
 app = Flask(__name__)
 CORS(app,expose_headers=['key','tempo'])
-app.secret_key = "secret key"
+
 UPLOAD_FOLDER = './uploads'
 
 app.permanent_session_lifetime=datetime.timedelta(minutes=2)
