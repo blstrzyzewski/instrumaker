@@ -35,6 +35,7 @@ function Home() {
     const settings = parseSettings();
     setLoading(true);
     setButtonText("Generating lead");
+
     const res =
       settings.key != "random"
         ? await getMelody(
@@ -71,6 +72,7 @@ function Home() {
 
     ReactDOM.render(<Track props={tracks} />, document.getElementById("root"));
   }
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [buttonText, setButtonText] = useState("Make instrumental");
   return (
@@ -81,8 +83,8 @@ function Home() {
           id="title-h1"
           style={{
             color: "white",
-            fontSize: "6em",
-            marginTop: "calc(50vh - 1.7em)",
+            fontSize: "5.5em",
+            marginTop: "calc(50vh - 2.75em)",
           }}
         >
           Instru-maker
@@ -92,13 +94,24 @@ function Home() {
       <Button
         outline
         secondary
+        negative={error}
         size="massive"
         style={{
           marginTop: "10vh",
           maxHeight: 62,
         }}
-        onClick={() => {
-          runButton();
+        onClick={async () => {
+          try {
+            await runButton();
+          } catch {
+            setLoading(false);
+            setError(true);
+            setButtonText("Error 😓");
+            setTimeout(() => {
+              setError(false);
+              setButtonText("Make instrumental");
+            }, 1500);
+          }
         }}
       >
         {loading ? <Loader /> : <Fragment />}

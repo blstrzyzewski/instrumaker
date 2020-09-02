@@ -6,6 +6,7 @@ import React, {
   useMemo,
   Fragment,
 } from "react";
+import hihat from "./hi-hat.png";
 import Navbar from "./navbar";
 import Loader from "./loader";
 import { Button, Dropdown, Icon, Divider, Transition } from "semantic-ui-react";
@@ -45,23 +46,22 @@ const trackOptions = [
     text: "Hat",
     value: "hat",
     image: {
-      src: "/hi-hat.png",
+      src: hihat,
     },
   },
 ];
-let containers = [];
 
 function Track(props) {
   console.log(props);
   const [tracks, setTracks] = useState(props.props);
   const [dropdownDisplay, setDropdownDisplay] = useState(false);
   const [title, setTitle] = useState("drums");
-  const [containers, setContainers] = useState([]);
+  const [error, setError] = useState(false);
   const wavesurferRef = useRef();
   const [loading, setLoading] = useState(false);
   const [indContainer, setIndContainer] = useState();
   const [masterContainer, setMasterContainer] = useState({});
-
+  const [buttonText, setButtonText] = useState("Refresh track");
   async function updateTrack() {
     console.log("1", tracks);
     setLoading(true);
@@ -76,11 +76,7 @@ function Track(props) {
 
   const handleWSMount = useCallback(async (waveSurfer, track) => {
     console.log("wavesss", waveSurfer);
-    let container;
 
-    console.log("llllllllllllll");
-
-    console.log("ffffffff", containers);
     wavesurferRef.current = waveSurfer;
 
     if (wavesurferRef.current) {
@@ -100,12 +96,10 @@ function Track(props) {
     }
   }, []);
   const handleChange = async (event, data) => {
-    console.log("ccc", containers);
     indContainer.loadBlob(tracks[data.value]);
     setTitle(data.value);
   };
   const play = (id) => {
-    console.log(containers);
     id == "ind" ? indContainer.playPause() : masterContainer.playPause();
 
     console.log(dropdownDisplay);
@@ -221,14 +215,25 @@ function Track(props) {
           <Button
             style={{ marginLeft: 4, backgroundColor: "red !important" }}
             primary
+            negative={true}
             loading={loading}
             size="large"
-            onClick={() => {
-              updateTrack("melody");
+            onClick={async () => {
+              try {
+                await updateTrack("melody");
+              } catch (error) {
+                setLoading(false);
+                setError(true);
+                setButtonText("Error refreshing");
+                setTimeout(() => {
+                  setError(false);
+                  setButtonText("Refresh track");
+                }, 1000);
+              }
             }}
           >
             {" "}
-            Refresh track
+            {buttonText}
           </Button>
         </Fragment>
       ) : (
