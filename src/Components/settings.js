@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import ReactDOM from "react-dom";
+git commit -m "updated settings"
 import { Grid } from "semantic-ui-react";
 import Navbar from "./navbar";
 import { Button } from "semantic-ui-react";
@@ -48,7 +48,6 @@ export default function Settings() {
       </Fragment>
     );
   }
-  console.log(sessionStorage.getItem("tempo"));
 
   const [key, setKey] = useState(
     sessionStorage.getItem("key") == null
@@ -116,7 +115,11 @@ export default function Settings() {
       <Sliders />
       <Button
         primary
-        style={{ marginLeft: "calc(50% - 83px)", marginTop: "50px" }}
+        style={{
+          marginLeft: "calc(50% - 75px)",
+          marginTop: "50px",
+          marginBottom: "20px",
+        }}
         color="purple"
         size="large"
         onClick={() => {
