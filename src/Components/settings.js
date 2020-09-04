@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-git commit -m "updated settings"
+
 import { Grid } from "semantic-ui-react";
 import Navbar from "./navbar";
 import { Button } from "semantic-ui-react";
