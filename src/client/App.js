@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+
 import "./App.css";
 import { WaveSurfer, WaveForm, Region } from "wavesurfer-react";
 import Track from "./Components/track";

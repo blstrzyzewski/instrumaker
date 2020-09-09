@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"path": "..\\.."
+	},
+	{
+		"path": "..\\..\\..\\..\\soundGen"
+	}
+],
+"settings": {
+	"editor.formatOnSave": true
+}
+}

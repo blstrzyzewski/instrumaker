@@ -11,30 +11,37 @@ export async function getMelody(
     ? (options = { key: key, tempoMin: tempoMin, tempoMax: tempoMax, fixed: 1 })
     : (options = { tempoMin: tempoMin, tempoMax: tempoMax, fixed: 0 });
 
-  const res = await axios({
-    method: "get",
-    url: "http://localhost:5011/audioOptions",
-    params: options,
-    responseType: "blob",
-  });
-  return res;
+  try {
+    const res = await axios({
+      method: "get",
+      url: "/audioOptions",
+      params: options,
+      responseType: "blob",
+    });
+    return res;
+  } catch (error) {
+    return new Error(error);
+  }
 }
-
 export async function getDrums(key, tempo, simple = false) {
-  console.log("drums", key, tempo);
-  const url = simple ? "getDrums" : "get_drum_tracks";
-  const res = await axios({
-    method: "get",
-    url: `http://localhost:5011/${url}`,
-    responseType: "blob",
-    params: {
-      key: key,
-      tempo: tempo,
-    },
-  });
-  const data = await res.data;
+  try {
+    ////console.log("drums", key, tempo);
+    const url = simple ? "getDrums" : "get_drum_tracks";
+    const res = await axios({
+      method: "get",
+      url: `/${url}`,
+      responseType: "blob",
+      params: {
+        key: key,
+        tempo: tempo,
+      },
+    });
+    const data = await res.data;
 
-  return data;
+    return data;
+  } catch (error) {
+    return new Error(error);
+  }
 }
 export async function unzipTracks(tracks) {
   let trackAudio = {};
@@ -43,11 +50,11 @@ export async function unzipTracks(tracks) {
   //alert("zippy created")
   for (const filename of Object.keys(zippy.files)) {
     let trackName = filename.split(".")[0];
-    console.log(trackName);
+    ////console.log(trackName);
     const fileData = await zippy.files[filename].async("uint8array");
     //alert("filedata gathered");
-    console.log("sssss", fileData);
-    let audio = new Blob([fileData], { type: "audio/wav" });
+    //console.log("sssss", fileData);
+    let audio = new Blob([fileData], { type: "audio/mp3" });
     trackAudio[trackName] = audio;
     if (trackName == "drums") {
     }
@@ -62,12 +69,12 @@ export async function createMaster(melody, drums) {
 
   const res = await axios({
     method: "POST",
-    url: "http://localhost:5011/save-record",
+    url: "/save-record",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
   });
-  const master = new Blob([res.data], { type: "audio/wav" });
+  const master = new Blob([res.data], { type: "audio/mp3" });
   return master;
 }
 
@@ -82,7 +89,7 @@ export async function refreshTrack(tracks, trackName) {
 
       newTracks = await unzipTracks(files);
     }
-    console.log("newTracks", newTracks);
+    ////console.log("newTracks", newTracks);
     newTracks.melody = tracks.melody;
     newTracks.key = tracks.key;
     newTracks.tempo = tracks.tempo;
@@ -110,7 +117,7 @@ export async function refreshTrack(tracks, trackName) {
 async function getOneTrack(trackName, key, tempo) {
   const options = {
     method: "get",
-    url: "http://localhost:5011/get_one_track",
+    url: "/get_one_track",
     params: {
       key: key,
       tempo: tempo,
@@ -133,7 +140,7 @@ async function combineDrums(trackAudio, key, tempo) {
 
   let options = {
     method: "post",
-    url: "http://localhost:5011/combine_drums",
+    url: "/combine_drums",
     data: form,
     headers: { "Content-Type": "multipart/form-data" },
     responseType: "blob",
