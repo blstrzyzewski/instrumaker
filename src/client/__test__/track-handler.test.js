@@ -1,5 +1,9 @@
-import { getDrums, unzipTracks, getMelody } from "../Components/track-handler";
-import { createMaster } from "../src/Components/track-handler";
+import {
+  getDrums,
+  unzipTracks,
+  getMelody,
+  createMaster,
+} from "../Components/track-handler";
 
 test("get drums simple", async () => {
   const drums = await getDrums("C", "123", true);
