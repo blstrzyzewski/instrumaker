@@ -1,4 +1,5 @@
 import { getDrums, unzipTracks, getMelody } from "../Components/track-handler";
+import { createMaster } from "../src/Components/track-handler";
 
 test("get drums simple", async () => {
   const drums = await getDrums("C", "123", true);
@@ -35,4 +36,13 @@ test("get melody fixed", async () => {
   const blob = new Blob([melody.data], { type: "audio/mp3" });
   expect(blob.type).toBe("audio/mp3");
   expect(blob.size).toBeGreaterThan(0);
+});
+
+test("create master", async () => {
+  const melody = await getMelody("Ab", "120", "120", true);
+  const drums = await getDrums("Ab", "120", true);
+  const master = await createMaster(melody.data, drums);
+
+  expect(master.type).toBe("audio/mp3");
+  expect(master.size).toBeGreaterThan(0);
 });
