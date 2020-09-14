@@ -10,7 +10,7 @@ import hihat from "./hi-hat.png";
 import Navbar from "./navbar";
 import Loader from "./loader";
 import { Button, Dropdown, Icon, Divider, Transition } from "semantic-ui-react";
-import { refreshTrack } from "./track-handler";
+import { refreshTrack, download } from "./track-handler";
 import { WaveSurfer, WaveForm } from "wavesurfer-react";
 const trackOptions = [
   {
@@ -142,6 +142,19 @@ function Track(props) {
         color="purple"
         size="large"
         onClick={() => {
+          download(tracks.master);
+        }}
+      >
+        {" "}
+        Download
+      </Button>
+      <Button
+        primary
+        id="show-tracks"
+        color="purple"
+        size="large"
+        style={{ paddingRight: "5px" }}
+        onClick={() => {
           setDropdownDisplay(!dropdownDisplay);
           if (dropdownDisplay) {
             indContainer.pause();
@@ -149,7 +162,7 @@ function Track(props) {
         }}
       >
         {" "}
-        Show tracks <Icon name="angle down"></Icon>
+        Show tracks {"  "} <Icon name="angle down"></Icon>
       </Button>
       <Divider style={{ opacity: 0 }} />
       {dropdownDisplay ? (
