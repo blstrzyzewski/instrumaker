@@ -150,3 +150,16 @@ async function combineDrums(trackAudio, key, tempo) {
 
   return drums.data;
 }
+
+export function download(track) {
+  //create download link for text field
+
+  const anchor = document.createElement("a");
+  anchor.download = "instrumental.mp3";
+  anchor.href = window.URL.createObjectURL(track);
+  anchor.target = "_blank";
+  anchor.style.display = "none"; // just to be safe!
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+}
